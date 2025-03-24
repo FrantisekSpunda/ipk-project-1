@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstring>
 #include <netinet/ip.h>
+#include <netinet/ip6.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 
@@ -22,7 +23,8 @@ public:
   };
 
   static uint16_t checksum(void *buf, int len);
-  static void buildPacket(char *packet, const char *src_ip, const char *target_ip, int port, int src_port);
+  static void buildPacketIPv4(char *packet, const char *src_ip, const char *target_ip, int port, int src_port);
+  static void buildPacketIPv6(char *packet, const char *src_ip, const char *target_ip, int port, int src_port);
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include <cstring>
 #include <sys/socket.h>
 #include <netinet/ip.h>
+#include <netinet/ip6.h>
 #include <netinet/tcp.h>
 #include <netinet/ip_icmp.h>
 #include <arpa/inet.h>
@@ -16,7 +17,7 @@
 class TcpScanner
 {
 public:
-  static void sendSynPacket(int sock, const char *src_ip, const char *target_ip, int port, int src_port);
+  static void sendSynPacket(int sock, const char *src_ip, const char *target_ip, int port, int src_port, bool isIPv);
   static std::string scanPort(const char *src_ip, const char *target_ip, int port, int src_port, int timeout_ms);
 };
 

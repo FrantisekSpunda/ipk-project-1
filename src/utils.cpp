@@ -162,3 +162,17 @@ std::pair<std::string, std::string> Utils::getIPAddressesForInterface(const std:
 
   return std::make_pair(ipv4_addr, ipv6_addr);
 }
+
+AddressType Utils::getAddressType(const std::string &ipStr)
+{
+  struct in_addr ipv4;
+  struct in6_addr ipv6;
+
+  if (inet_pton(AF_INET, ipStr.c_str(), &ipv4) == 1)
+    return AddressType::IPv4;
+
+  if (inet_pton(AF_INET6, ipStr.c_str(), &ipv6) == 1)
+    return AddressType::IPv6;
+
+  return AddressType::Unknown;
+}

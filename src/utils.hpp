@@ -12,6 +12,13 @@
 #include <getopt.h>
 #include <iostream>
 
+enum class AddressType
+{
+  IPv4,
+  IPv6,
+  Unknown
+};
+
 class Utils
 {
 public:
@@ -19,6 +26,7 @@ public:
   static std::pair<std::string, std::string> getLocalIPAddresses();
   static std::vector<int> parsePortRange(const std::string &rangeStr);
   static std::pair<std::string, std::string> getIPAddressesForInterface(const std::string &ifaceName);
+  static AddressType getAddressType(const std::string &ipStr);
 };
 
 #endif

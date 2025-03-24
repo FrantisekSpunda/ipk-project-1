@@ -92,12 +92,14 @@ int main(int argc, char *argv[])
 
   std::string target = argv[optind];
   std::vector<std::string> ip_list = Utils::resolveDomainToIPs(target);
-  std::pair<std::string, std::string> src_ip = interface.empty() ? Utils::getLocalIPAddresses() : Utils::getIPAddressesForInterface(interface);
+  std::pair<std::string, std::string> src_ips = interface.empty() ? Utils::getLocalIPAddresses() : Utils::getIPAddressesForInterface(interface);
 
   std::vector<std::thread> threads;
 
   for (std::string target_ip : ip_list)
   {
+    std::string src_ip = Utils::getAddressType(target_ip) == AddressType::IPv4 ? src_ips.first : src_ips.second;
+
     for (int port : tcp_ports)
     {
       threads.emplace_back(scanTcpWorker, src_ip, target_ip, port, timeout_ms);

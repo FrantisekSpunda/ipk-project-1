@@ -1,10 +1,11 @@
 #include "tcp_scanner.hpp"
 #include "packet_builder.hpp"
+#include "utils.hpp"
 
-void TcpScanner::sendSynPacket(int sock, const char *src_ip, const char *target_ip, int port, int src_port)
+void TcpScanner::sendSynPacket(int sock, const char *src_ip, const char *target_ip, int port, int src_port, bool isIPv)
 {
   char packet[sizeof(struct ip) + sizeof(struct tcphdr)];
-  PacketBuilder::buildPacket(packet, src_ip, target_ip, port, src_port);
+  PacketBuilder::buildPacketIPv4(packet, src_ip, target_ip, port, src_port);
 
   struct sockaddr_in target;
   target.sin_family = AF_INET;
@@ -42,10 +43,12 @@ std::string TcpScanner::scanPort(const char *src_ip, const char *target_ip, int 
     exit(1);
   }
 
+  bool isIPv = Utils::getAddressType(src_ip) == AddressType::IPv6;
+
   for (int attempt = 1; attempt <= 2; attempt++)
   {
 
-    sendSynPacket(send_sock, src_ip, target_ip, port, src_port);
+    sendSynPacket(send_sock, src_ip, target_ip, port, src_port, isIPv);
 
     const int max_wait_ms = 1500; // celkový čas čekání 1.5 s
     int waited_ms = 0;
