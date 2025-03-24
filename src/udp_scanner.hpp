@@ -11,7 +11,7 @@
 class UdpScanner
 {
 public:
-  static void scanPort(const char *target_ip, int port);
+  static std::string scanPort(const char *target_ip, int port, int timeout_ms);
 };
 
 #endif

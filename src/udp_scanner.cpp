@@ -1,6 +1,6 @@
 #include "udp_scanner.hpp"
 
-void UdpScanner::scanPort(const char *target_ip, int port)
+std::string UdpScanner::scanPort(const char *target_ip, int port, int timeout_ms)
 {
   // Create UDP socket
   int udp_sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -33,10 +33,11 @@ void UdpScanner::scanPort(const char *target_ip, int port)
   FD_ZERO(&readfds);
   FD_SET(icmp_sock, &readfds);
   struct timeval timeout{};
-  timeout.tv_sec = 1;
-  timeout.tv_usec = 500000;
+  timeout.tv_sec = 0;
+  timeout.tv_usec = timeout_ms * 1000;
 
   int ready = select(icmp_sock + 1, &readfds, nullptr, nullptr, &timeout);
+
   if (ready > 0)
   {
     char buffer[1024];
@@ -51,17 +52,16 @@ void UdpScanner::scanPort(const char *target_ip, int port)
 
       struct icmp *icmp_hdr = (struct icmp *)(buffer + ip_hdr_len);
 
-      if (icmp_hdr->icmp_type == 3 && icmp_hdr->icmp_code == 3)
+      if (icmp_hdr->icmp_type == 3 && icmp_hdr->icmp_code == 3 && ip_hdr->ip_src.s_addr == inet_addr(target_ip))
       {
-        std::cout << "UDP Port " << port << " is CLOSED." << std::endl;
         close(udp_sock);
         close(icmp_sock);
-        return;
+        return "closed";
       }
     }
   }
 
-  std::cout << "UDP Port " << port << " is OPENED." << std::endl;
   close(udp_sock);
   close(icmp_sock);
+  return "open";
 }

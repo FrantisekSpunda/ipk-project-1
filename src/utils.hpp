@@ -1,0 +1,24 @@
+#ifndef __UTILS__
+#define __UTILS__
+
+#include <iostream>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <cstdlib>
+#include <ifaddrs.h>
+#include <string.h>
+#include <vector>
+#include <sstream>
+#include <getopt.h>
+#include <iostream>
+
+class Utils
+{
+public:
+  static std::vector<std::string> resolveDomainToIPs(const std::string &domain);
+  static std::pair<std::string, std::string> getLocalIPAddresses();
+  static std::vector<int> parsePortRange(const std::string &rangeStr);
+  static std::pair<std::string, std::string> getIPAddressesForInterface(const std::string &ifaceName);
+};
+
+#endif

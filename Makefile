@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -I./src
+CXXFLAGS = -std=c++20 -Wall -Wextra -I./src
 LDFLAGS = -lpcap
 
 SRC_DIR = src
@@ -22,4 +22,4 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 run: all
-	sudo ./$(TARGET)
+	sudo ./$(TARGET) $(ARGS)

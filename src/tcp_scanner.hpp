@@ -12,14 +12,12 @@
 #include <unistd.h>
 #include <ifaddrs.h>
 #include <netdb.h>
-#include <boost/asio.hpp>
 
 class TcpScanner
 {
 public:
   static void sendSynPacket(int sock, const char *src_ip, const char *target_ip, int port, int src_port);
-
-  static void scanPort(const char *src_ip, const char *target_ip, int port, int src_port);
+  static std::string scanPort(const char *src_ip, const char *target_ip, int port, int src_port, int timeout_ms);
 };
 
 #endif
