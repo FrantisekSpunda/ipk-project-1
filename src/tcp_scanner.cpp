@@ -23,7 +23,7 @@ void TcpScanner::sendSynPacket(int sock)
   target.sin_port = htons(port);
   target.sin_addr.s_addr = inet_addr(target_ip);
 
-  if (interface != "\0")
+  if (interface != nullptr && interface[0] != '\0')
   {
     if (setsockopt(sock, SOL_SOCKET, SO_BINDTODEVICE, interface, sizeof(interface)) < 0)
     {
@@ -61,8 +61,6 @@ std::string TcpScanner::scanPort()
     perror("Socket (recv) creation failed");
     exit(1);
   }
-
-  bool isIPv = Utils::getAddressType(src_ip) == AddressType::IPv6;
 
   for (int attempt = 1; attempt <= 2; attempt++)
   {

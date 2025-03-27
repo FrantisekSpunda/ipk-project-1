@@ -1,25 +1,19 @@
 CXX = g++
-CXXFLAGS = -g -std=c++20 -Wall -Wextra -I./src
+CXXFLAGS = -std=c++20 -Wall -Wextra -I./src
 LDFLAGS = -lpcap
 
 SRC_DIR = src
-BUILD_DIR = build
+TARGET = ipk-l4-scan
 
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCES))
-TARGET = $(BUILD_DIR)/app
 
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
-
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(TARGET):
+	$(CXX) $(CXXFLAGS) $(SOURCES) -o $(TARGET) $(LDFLAGS)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -f $(TARGET)
 
 run: all
 	sudo ./$(TARGET) $(ARGS)
