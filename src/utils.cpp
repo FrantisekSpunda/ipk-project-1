@@ -5,7 +5,7 @@ std::vector<std::string> Utils::resolveDomainToIPs(const std::string &domain)
   struct addrinfo hints{}, *res, *p;
   std::vector<std::string> ip_list;
 
-  hints.ai_family = AF_UNSPEC;    // IPv4 i IPv6
+  hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_DGRAM; // UDP socket type
 
   int err = getaddrinfo(domain.c_str(), nullptr, &hints, &res);
@@ -61,7 +61,7 @@ std::pair<std::string, std::string> Utils::getLocalIPAddresses()
     int family = ifa->ifa_addr->sa_family;
 
     if (strcmp(ifa->ifa_name, "lo") == 0)
-      continue; // Skip loopback
+      continue;
 
     if (family == AF_INET || family == AF_INET6)
     {

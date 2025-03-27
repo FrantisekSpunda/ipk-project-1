@@ -21,7 +21,6 @@ std::string UdpScanner::scanPort(const char *target_ip, int port, int timeout_ms
     }
   }
 
-  //
   if (!isIPv6)
   {
     struct sockaddr_in dest{};

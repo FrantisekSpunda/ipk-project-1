@@ -39,7 +39,7 @@ void TcpScanner::sendSynPacket(int sock)
 
 std::string TcpScanner::scanPort()
 {
-  // Socket pro odeslání SYN packetu
+  // Socket to send SYN packet
   int send_sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
   if (send_sock < 0)
   {
@@ -69,7 +69,7 @@ std::string TcpScanner::scanPort()
 
     sendSynPacket(send_sock);
 
-    const int max_wait_ms = 1500; // celkový čas čekání 1.5 s
+    const int max_wait_ms = 1500;
     int waited_ms = 0;
 
     // Wait for response
