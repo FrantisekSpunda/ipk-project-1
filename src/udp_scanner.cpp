@@ -1,7 +1,7 @@
 #include "udp_scanner.hpp"
 #include "utils.hpp"
 
-std::string UdpScanner::scanPort(const char *target_ip, int port, int timeout_ms)
+std::string UdpScanner::scanPort(const char *target_ip, int port, int timeout_ms, const char *interface)
 {
   bool isIPv6 = Utils::getAddressType(target_ip) == AddressType::IPv6;
 
@@ -11,6 +11,14 @@ std::string UdpScanner::scanPort(const char *target_ip, int port, int timeout_ms
   {
     perror("UDP socket failed");
     exit(1);
+  }
+
+  if (interface != "\0")
+  {
+    if (setsockopt(udp_sock, SOL_SOCKET, SO_BINDTODEVICE, interface, sizeof(interface)) < 0)
+    {
+      perror("setsockopt SO_BINDTODEVICE failed");
+    }
   }
 
   //

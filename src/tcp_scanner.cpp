@@ -2,7 +2,18 @@
 #include "packet_builder.hpp"
 #include "utils.hpp"
 
-void TcpScanner::sendSynPacket(int sock, const char *src_ip, const char *target_ip, int port, int src_port, bool isIPv)
+TcpScanner::TcpScanner(const char *_src_ip, const char *_target_ip, const char *_interface, int _port, int _src_port, bool _isIPv6, int _timeout_ms)
+{
+  src_ip = _src_ip;
+  target_ip = _target_ip;
+  port = _port;
+  src_port = _src_port;
+  isIPv6 = _isIPv6;
+  timeout_ms = _timeout_ms;
+  interface = _interface;
+}
+
+void TcpScanner::sendSynPacket(int sock)
 {
   char packet[sizeof(struct ip) + sizeof(struct tcphdr)];
   PacketBuilder::buildPacketIPv4(packet, src_ip, target_ip, port, src_port);
@@ -12,13 +23,21 @@ void TcpScanner::sendSynPacket(int sock, const char *src_ip, const char *target_
   target.sin_port = htons(port);
   target.sin_addr.s_addr = inet_addr(target_ip);
 
+  if (interface != "\0")
+  {
+    if (setsockopt(sock, SOL_SOCKET, SO_BINDTODEVICE, interface, sizeof(interface)) < 0)
+    {
+      perror("setsockopt SO_BINDTODEVICE failed");
+    }
+  }
+
   if (sendto(sock, packet, sizeof(packet), 0, (struct sockaddr *)&target, sizeof(target)) < 0)
   {
     perror("Failed to send packet");
   }
 }
 
-std::string TcpScanner::scanPort(const char *src_ip, const char *target_ip, int port, int src_port, int timeout_ms)
+std::string TcpScanner::scanPort()
 {
   // Socket pro odeslání SYN packetu
   int send_sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
@@ -48,7 +67,7 @@ std::string TcpScanner::scanPort(const char *src_ip, const char *target_ip, int 
   for (int attempt = 1; attempt <= 2; attempt++)
   {
 
-    sendSynPacket(send_sock, src_ip, target_ip, port, src_port, isIPv);
+    sendSynPacket(send_sock);
 
     const int max_wait_ms = 1500; // celkový čas čekání 1.5 s
     int waited_ms = 0;

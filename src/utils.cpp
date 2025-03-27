@@ -130,7 +130,7 @@ std::pair<std::string, std::string> Utils::getIPAddressesForInterface(const std:
     if (ifa->ifa_addr == nullptr)
       continue;
 
-    if (ifaceName != ifa->ifa_name)
+    if (!ifaceName.empty() && ifaceName != ifa->ifa_name)
       continue;
 
     int family = ifa->ifa_addr->sa_family;
@@ -143,6 +143,7 @@ std::pair<std::string, std::string> Utils::getIPAddressesForInterface(const std:
       {
         if (family == AF_INET && ipv4_addr.empty())
           ipv4_addr = std::string(host);
+
         else if (family == AF_INET6 && ipv6_addr.empty())
           ipv6_addr = std::string(host);
 

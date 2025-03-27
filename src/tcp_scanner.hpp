@@ -16,9 +16,19 @@
 
 class TcpScanner
 {
+private:
+  const char *src_ip;
+  const char *target_ip;
+  const char *interface;
+  int port;
+  int src_port;
+  bool isIPv6;
+  int timeout_ms;
+
 public:
-  static void sendSynPacket(int sock, const char *src_ip, const char *target_ip, int port, int src_port, bool isIPv);
-  static std::string scanPort(const char *src_ip, const char *target_ip, int port, int src_port, int timeout_ms);
+  TcpScanner(const char *_src_ip, const char *_target_ip, const char *_interface, int _port, int _src_port, bool _isIPv6, int _timeout_ms);
+  void sendSynPacket(int sock);
+  std::string scanPort();
 };
 
 #endif

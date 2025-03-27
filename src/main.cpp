@@ -18,11 +18,12 @@ std::mutex result_mutex;
 std::map<int, std::string> tcp_results;
 std::map<int, std::string> udp_results;
 
-void scanTcpWorker(const std::string &src_ip, const std::string &target_ip, int port, int timeout_ms)
+void scanTcpWorker(const std::string &src_ip, const std::string &target_ip, int port, int timeout_ms, const std::string interface)
 {
   thread_limiter.acquire();
   int src_port = 40000 + rand() % 20000;
-  std::string result = TcpScanner::scanPort(src_ip.c_str(), target_ip.c_str(), port, src_port, timeout_ms);
+  TcpScanner tcp_scanff(src_ip.c_str(), target_ip.c_str(), interface.c_str(), port, src_port, Utils::getAddressType(src_ip.c_str()) == AddressType::IPv6, timeout_ms);
+  std::string result = tcp_scanff.scanPort();
 
   {
     std::lock_guard<std::mutex> lock(result_mutex);
@@ -31,10 +32,10 @@ void scanTcpWorker(const std::string &src_ip, const std::string &target_ip, int 
   thread_limiter.release();
 }
 
-void scanUdpWorker(const std::string &target_ip, int port, int timeout_ms)
+void scanUdpWorker(const std::string &target_ip, int port, int timeout_ms, const std::string interface)
 {
   thread_limiter.acquire();
-  std::string result = UdpScanner::scanPort(target_ip.c_str(), port, timeout_ms);
+  std::string result = UdpScanner::scanPort(target_ip.c_str(), port, timeout_ms, interface.c_str());
 
   {
     std::lock_guard<std::mutex> lock(result_mutex);
@@ -92,7 +93,7 @@ int main(int argc, char *argv[])
 
   std::string target = argv[optind];
   std::vector<std::string> ip_list = Utils::resolveDomainToIPs(target);
-  std::pair<std::string, std::string> src_ips = interface.empty() ? Utils::getLocalIPAddresses() : Utils::getIPAddressesForInterface(interface);
+  std::pair<std::string, std::string> src_ips = Utils::getIPAddressesForInterface(interface);
 
   std::vector<std::thread> threads;
 
@@ -102,11 +103,11 @@ int main(int argc, char *argv[])
 
     for (int port : tcp_ports)
     {
-      threads.emplace_back(scanTcpWorker, src_ip, target_ip, port, timeout_ms);
+      threads.emplace_back(scanTcpWorker, src_ip, target_ip, port, timeout_ms, interface);
     }
     for (int port : udp_ports)
     {
-      threads.emplace_back(scanUdpWorker, target_ip, port, timeout_ms);
+      threads.emplace_back(scanUdpWorker, target_ip, port, timeout_ms, interface);
     }
 
     for (auto &t : threads)
