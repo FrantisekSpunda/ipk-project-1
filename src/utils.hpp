@@ -12,6 +12,8 @@
 #include <getopt.h>
 #include <iostream>
 
+#define BUFFER_SIZE 1024
+
 enum class AddressType
 {
   IPv4,

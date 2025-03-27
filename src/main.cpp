@@ -11,7 +11,7 @@
 #include "udp_scanner.hpp"
 #include "utils.hpp"
 
-constexpr int MAX_THREADS = 50;
+constexpr int MAX_THREADS = 100;
 std::counting_semaphore<MAX_THREADS> thread_limiter(MAX_THREADS);
 std::mutex result_mutex;
 

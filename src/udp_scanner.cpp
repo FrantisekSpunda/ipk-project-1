@@ -13,7 +13,7 @@ std::string UdpScanner::scanPort(const char *target_ip, int port, int timeout_ms
     exit(1);
   }
 
-  if (interface != "\0")
+  if (interface[0] != '\0')
   {
     if (setsockopt(udp_sock, SOL_SOCKET, SO_BINDTODEVICE, interface, sizeof(interface)) < 0)
     {
@@ -90,7 +90,7 @@ std::string UdpScanner::scanPort(const char *target_ip, int port, int timeout_ms
 
     if (ready > 0)
     {
-      char buffer[1024];
+      char buffer[BUFFER_SIZE];
       sockaddr_in sender{};
       socklen_t sender_len = sizeof(sender);
 
