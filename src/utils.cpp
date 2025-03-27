@@ -32,7 +32,7 @@ std::vector<std::string> Utils::resolveDomainToIPs(const std::string &domain)
 
     if (ip_str[0] != '\0')
     {
-      std::cout << ip_str << "\n";
+      // std::cout << ip_str << "\n";
       ip_list.emplace_back(ip_str);
     }
   }
